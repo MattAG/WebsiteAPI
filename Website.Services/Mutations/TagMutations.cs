@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks;
 using HotChocolate;
+using HotChocolate.AspNetCore.Authorization;
 using HotChocolate.Data;
 using HotChocolate.Types;
 using HotChocolate.Types.Relay;
-using Website.Core.Classes;
+using Website.Core.Errors;
 using Website.Data.Contexts;
 using Website.Data.Entities;
 using Website.Services.Inputs;
@@ -15,6 +16,7 @@ namespace Website.Services.Mutations
     /// Mutations for tags.
     /// </summary>
     [ExtendObjectType(Name = "Mutation")]
+    [Authorize]
     public sealed class TagMutations
     {
         /// <summary>

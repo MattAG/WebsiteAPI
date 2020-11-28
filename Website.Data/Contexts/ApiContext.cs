@@ -26,6 +26,14 @@ namespace Website.Data.Contexts
         public DbSet<Tag> Tags { get; set; } = default!;
 
         /// <summary>
+        /// Gets or sets the users.
+        /// </summary>
+        /// <value>
+        /// The users.
+        /// </value>
+        public DbSet<User> Users { get; set; } = default!;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ApiContext"/> class.
         /// </summary>
         /// <param name="options">The options for this context.</param>
