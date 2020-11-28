@@ -10,5 +10,5 @@ namespace Website.Services.Inputs
     public record UpdatePostInput([ID(nameof(Post))] int Id,
                                   string Title,
                                   string Content,
-                                  List<Tag> Tags);
+                                  List<PostTagInput> Tags);
 }

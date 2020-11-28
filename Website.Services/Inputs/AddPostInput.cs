@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Website.Data.Entities;
 
 namespace Website.Services.Inputs
 {
@@ -8,5 +7,5 @@ namespace Website.Services.Inputs
     /// </summary>
     public record AddPostInput(string Title,
                                string Content,
-                               List<Tag> Tags);
+                               List<PostTagInput> Tags);
 }

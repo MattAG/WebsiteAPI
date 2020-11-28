@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HotChocolate;
@@ -37,8 +38,7 @@ namespace Website.Services.Mutations
             {
                 Title = input.Title,
                 Content = input.Content,
-                Created = DateTimeOffset.UtcNow,
-                Tags = input.Tags
+                Created = DateTimeOffset.UtcNow
             };
 
             if (await context.Posts.FirstOrDefaultAsync(p => p.Title == input.Title)
@@ -48,6 +48,16 @@ namespace Website.Services.Mutations
             }
 
             post = context.Posts.Add(post).Entity;
+
+            await context.SaveChangesAsync()
+                         .ConfigureAwait(false);
+
+            List<int> tagIds = input.Tags.ConvertAll(t => t.Id);
+
+            post.Tags = await context.Tags.AsNoTracking()
+                                          .Where(t => tagIds.Contains(t.Id))
+                                          .ToListAsync()
+                                          .ConfigureAwait(false);
 
             await context.SaveChangesAsync()
                          .ConfigureAwait(false);
@@ -84,13 +94,7 @@ namespace Website.Services.Mutations
                 return new UpdatePostPayload(new ApiError("POST_WITH_TITLE_EXISTS", "A post with that title already exists."));
             }
 
-            post.Title = input.Title;
-            post.Content = input.Content;
-            post.Modified = DateTimeOffset.UtcNow;
-
-            post.Tags.RemoveAll(t => !input.Tags.Any(it => it.Id == t.Id));
-            post.Tags.AddRange(input.Tags.Where(t => !post.Tags.Any(pt => pt.Id == t.Id))
-                                         .ToList());
+            await ApplyUpdatedValuesToPost(post, input, context).ConfigureAwait(false);
 
             await context.SaveChangesAsync()
                          .ConfigureAwait(false);
@@ -99,6 +103,32 @@ namespace Website.Services.Mutations
                              .ConfigureAwait(false);
 
             return new UpdatePostPayload(post);
+        }
+
+        /// <summary>
+        /// Applies the updated values to post.
+        /// </summary>
+        /// <param name="post">The post.</param>
+        /// <param name="input">The input.</param>
+        /// <param name="context">The context.</param>
+        private static async Task ApplyUpdatedValuesToPost(Post post, UpdatePostInput input, ApiContext context)
+        {
+            post.Title = input.Title;
+            post.Content = input.Content;
+            post.Modified = DateTimeOffset.UtcNow;
+
+            List<int> updatedTagIds = input.Tags.ConvertAll(t => t.Id);
+
+            post.Tags.RemoveAll(t => !updatedTagIds.Contains(t.Id));
+
+            List<int> currentTagIds = post.Tags.ConvertAll(t => t.Id);
+
+            List<Tag> tagsToAdd = await context.Tags.AsNoTracking()
+                                                    .Where(t => updatedTagIds.Contains(t.Id) && !currentTagIds.Contains(t.Id))
+                                                    .ToListAsync()
+                                                    .ConfigureAwait(false);
+
+            post.Tags.AddRange(tagsToAdd);
         }
     }
 }
