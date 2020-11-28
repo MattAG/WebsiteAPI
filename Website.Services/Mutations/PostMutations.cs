@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using HotChocolate;
+using HotChocolate.AspNetCore.Authorization;
 using HotChocolate.Data;
 using HotChocolate.Subscriptions;
 using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
-using Website.Core.Classes;
+using Website.Core.Errors;
 using Website.Data.Contexts;
 using Website.Data.Entities;
 using Website.Services.Inputs;
@@ -19,6 +20,7 @@ namespace Website.Services.Mutations
     /// Mutations for posts.
     /// </summary>
     [ExtendObjectType(Name = "Mutation")]
+    [Authorize]
     public sealed class PostMutations
     {
         /// <summary>

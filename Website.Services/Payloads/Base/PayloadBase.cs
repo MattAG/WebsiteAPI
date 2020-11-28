@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Website.Core.Classes;
+using Website.Core.Errors;
 
 namespace Website.Services.Payloads.Base
 {

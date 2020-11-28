@@ -1,4 +1,4 @@
-﻿using Website.Core.Classes;
+﻿using Website.Core.Errors;
 using Website.Data.Entities;
 using Website.Services.Payloads.Base;
 

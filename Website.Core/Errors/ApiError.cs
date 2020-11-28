@@ -1,9 +1,9 @@
-﻿namespace Website.Core.Classes
+﻿namespace Website.Core.Errors
 {
     /// <summary>
     /// Error information container class.
     /// </summary>
-    public class ApiError
+    public sealed class ApiError
     {
         /// <summary>
         /// Gets the code.
